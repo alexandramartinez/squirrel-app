@@ -1,0 +1,7 @@
+{
+  "runtime": "4.7-e-java17",
+  "workerSize": 0.1,
+  "applicationName": "squirrel-app",
+  "workers": 1,
+  "autoStart": true
+}
