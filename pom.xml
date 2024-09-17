@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>8ee07573-4230-4e12-b0c1-6f824217216f</groupId>
     <artifactId>squirrel-app</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>mule-application</packaging>
     <name>squirrel-app</name>
     <properties>
