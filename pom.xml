@@ -12,8 +12,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <mule.maven.plugin.version>4.2.0</mule.maven.plugin.version>
-        <app.runtime>4.7.0</app.runtime>
         <env>Sandbox</env>
+		<releaseChannel>LTS</releaseChannel>
+		<region>Cloudhub-US-East-2</region>
+		<serverId>Repository</serverId>
     </properties>
     <build>
         <plugins>
@@ -28,20 +30,21 @@
                 <version>${mule.maven.plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <cloudHubDeployment>
-                        <uri>https://anypoint.mulesoft.com</uri>
-                        <muleVersion>${app.runtime}</muleVersion>
-                        <connectedAppClientId>${client.id}</connectedAppClientId>
-                        <connectedAppClientSecret>${client.secret}</connectedAppClientSecret>
-                        <connectedAppGrantType>client_credentials</connectedAppGrantType>
-                        <applicationName>${project.name}</applicationName>
-                        <environment>${env}</environment>
-                        <workerType>MICRO</workerType>
-                        <region>us-east-2</region>
-                        <workers>1</workers>
-                        <objectStoreV2>true</objectStoreV2>
-                    </cloudHubDeployment>
                     <classifier>mule-application</classifier>
+                    <cloudhub2Deployment>
+                        <uri>https://anypoint.mulesoft.com</uri>
+                        <provider>MC</provider>
+                        <environment>${env}</environment>
+                        <target>${region}</target>
+                        <server>${serverId}</server>
+                        <applicationName>${project.artifactId}</applicationName>
+						<releaseChannel>${releaseChannel}</releaseChannel>
+                        <replicas>1</replicas>
+                        <vCores>0.1</vCores>
+                        <deploymentSettings>
+                            <generateDefaultPublicUrl>true</generateDefaultPublicUrl>
+                        </deploymentSettings>
+                    </cloudhub2Deployment>
                 </configuration>
             </plugin>
         </plugins>
@@ -57,6 +60,12 @@
             <id>mulesoft-releases</id>
             <name>MuleSoft Releases Repository</name>
             <url>https://repository.mulesoft.org/releases/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>${serverId}</id>
+            <name>Private Exchange repository</name>
+            <url>https://maven.anypoint.mulesoft.com/api/v3/organizations/${project.groupId}/maven</url>
             <layout>default</layout>
         </repository>
     </repositories>
@@ -94,7 +103,7 @@
     </dependencies>
     <distributionManagement>
         <repository>
-            <id>Repository</id>
+            <id>${serverId}</id>
             <name>Corporate Repository</name>
             <url>https://maven.anypoint.mulesoft.com/api/v3/organizations/${project.groupId}/maven</url>
             <layout>default</layout>
