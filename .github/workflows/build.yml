@@ -23,7 +23,7 @@ jobs:
         distribution: 'zulu'
         java-version: 17
     - name: Build with Maven
-      run: mvn -B package --file pom.xml -DskipMunitTests
+      run: mvn -B package --settings .maven/settings.xml --file pom.xml -DskipMunitTests
     - name: Stamp artifact file name with commit hash
       run: |
         artifactName1=$(ls target/*.jar | head -1)
@@ -33,7 +33,7 @@ jobs:
     - name: Deploy to Sandbox
       run: |
         artifactName=$(ls *.jar | head -1)
-        mvn deploy -B -DskipMunitTests -DmuleDeploy \
+        mvn deploy --settings .maven/settings.xml -DskipMunitTests -DmuleDeploy \
         -Dmule.artifact=$artifactName \
         -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
         -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}" 
