@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mycompany</groupId>
     <artifactId>squirrel-app</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1</version>
     <packaging>mule-application</packaging>
     <name>squirrel-app</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <mule.maven.plugin.version>4.0.0</mule.maven.plugin.version>
+        <mule.maven.plugin.version>4.2.0</mule.maven.plugin.version>
+        <app.runtime>4.7.0</app.runtime>
+		<env>Sandbox</env>
     </properties>
     <build>
         <plugins>
@@ -23,15 +27,30 @@
                 <artifactId>mule-maven-plugin</artifactId>
                 <version>${mule.maven.plugin.version}</version>
                 <extensions>true</extensions>
-                <configuration/>
+                <configuration>
+                    <cloudHubDeployment>
+                        <uri>https://anypoint.mulesoft.com</uri>
+                        <muleVersion>${app.runtime}</muleVersion>
+                        <connectedAppClientId>${client.id}</connectedAppClientId>
+                        <connectedAppClientSecret>${client.secret}</connectedAppClientSecret>
+                        <connectedAppGrantType>client_credentials</connectedAppGrantType>
+                        <applicationName>${project.name}</applicationName>
+                        <environment>${env}</environment>
+                        <workerType>MICRO</workerType>
+                        <region>us-east-2</region>
+                        <workers>1</workers>
+                        <objectStoreV2>true</objectStoreV2>
+                    </cloudHubDeployment>
+                    <classifier>mule-application</classifier>
+                </configuration>
             </plugin>
         </plugins>
     </build>
     <repositories>
         <repository>
-            <id>anypoint-exchange-v2</id>
+            <id>anypoint-exchange-v3</id>
             <name>Anypoint Exchange</name>
-            <url>https://maven.anypoint.mulesoft.com/api/v2/maven</url>
+            <url>https://maven.anypoint.mulesoft.com/api/v3/maven</url>
             <layout>default</layout>
         </repository>
         <repository>
