@@ -33,7 +33,7 @@ jobs:
     - name: Deploy to Sandbox
       run: |
         artifactName=$(ls *.jar | head -1)
-        mvn deploy -DskipMunitTests -DmuleDeploy -B \
+        mvn deploy -B -DskipMunitTests -DmuleDeploy \
         -Dmule.artifact=$artifactName \
         -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
         -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}" 

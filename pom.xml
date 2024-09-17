@@ -3,7 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.mycompany</groupId>
+    <groupId>8ee07573-4230-4e12-b0c1-6f824217216f</groupId>
     <artifactId>squirrel-app</artifactId>
     <version>1.0.1</version>
     <packaging>mule-application</packaging>
@@ -13,7 +13,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <mule.maven.plugin.version>4.2.0</mule.maven.plugin.version>
         <app.runtime>4.7.0</app.runtime>
-		<env>Sandbox</env>
+        <env>Sandbox</env>
     </properties>
     <build>
         <plugins>
@@ -48,9 +48,9 @@
     </build>
     <repositories>
         <repository>
-            <id>anypoint-exchange-v2</id>
+            <id>anypoint-exchange-v3</id>
             <name>Anypoint Exchange</name>
-            <url>https://maven.anypoint.mulesoft.com/api/v2/maven</url>
+            <url>https://maven.anypoint.mulesoft.com/api/v3/maven</url>
             <layout>default</layout>
         </repository>
         <repository>
@@ -73,7 +73,7 @@
     </pluginRepositories>
     <dependencies>
         <dependency>
-            <groupId>8ee07573-4230-4e12-b0c1-6f824217216f</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>squirrel</artifactId>
             <version>1.0.1</version>
             <classifier>raml</classifier>
@@ -92,4 +92,12 @@
             <classifier>mule-plugin</classifier>
         </dependency>
     </dependencies>
+    <distributionManagement>
+        <repository>
+            <id>Repository</id>
+            <name>Corporate Repository</name>
+            <url>https://maven.anypoint.mulesoft.com/api/v3/organizations/${project.groupId}/maven</url>
+            <layout>default</layout>
+        </repository>
+    </distributionManagement>
 </project>
