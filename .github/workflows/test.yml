@@ -56,4 +56,4 @@ jobs:
           echo $appId
           appUri=$(anypoint-cli-v4 runtime-mgr:application:describe --output json "$appId" | jq '.target.deploymentSettings.http.inbound.publicUrl')
           echo $appUri
-          anypoint-cli-v4 api-mgr:api:edit --uri "$appUri" "$API_MANAGER_API_ID"
+          
