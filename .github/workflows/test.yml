@@ -29,9 +29,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 16
-      - name: Install Anypoint CLI & alias
+      - name: Install Anypoint CLI
         run: |
           npm install -g anypoint-cli-v4
+      - name: Add alias for Anypoint CLI
+        run: |
           alias anypoint=anypoint-cli-v4
       - name: Authenticate to Anypoint CLI
         run: |
