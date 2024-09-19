@@ -40,19 +40,17 @@ jobs:
       - name: Set ANYPOINT_ENV
         run: |
           echo "ANYPOINT_ENV=$(mvn help:evaluate -Dexpression=env -q -DforceStdout)"
-      - name: Set REST_API_VERSION
+      - name: API Manager - Change specification version
         run: |
-          echo "REST_API_VERSION=$(mvn dependency:list -DincludeArtifactIds=$REST_API_ARTIFACT_ID \
+          restApiVersion=$(mvn dependency:list -DincludeArtifactIds=$REST_API_ARTIFACT_ID \
           --settings .maven/settings.xml \
           -DskipMunitTests \
           -Dclient.id="$ANYPOINT_CLIENT_ID" \
-          -Dclient.secret="$ANYPOINT_CLIENT_SECRET" | grep ":$REST_API_ARTIFACT_ID:" | grep -Eo "[0-9]+[.][0-9]+[.][0-9]+")" >> $GITHUB_ENV
-      - name: API Manager - Change specification version
-        run: |
-          anypoint-cli-v4 api-mgr:api:change-specification $API_MANAGER_API_ID $REST_API_VERSION
+          -Dclient.secret="$ANYPOINT_CLIENT_SECRET" | grep ":$REST_API_ARTIFACT_ID:" | grep -Eo "[0-9]+[.][0-9]+[.][0-9]+")
+          anypoint-cli-v4 api-mgr:api:change-specification $API_MANAGER_API_ID $restApiVersion
       - name: API Manager - Update implementation URI
         run: |
           appName=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
           appId=$(anypoint-cli-v4 runtime-mgr:application:list --output json | jq '.[]|select(.name=="$appName").id')
           appUri=$(anypoint-cli-v4 runtime-mgr:application:describe --output json $appId | jq '.target.deploymentSettings.http.inbound.publicUrl')
-          anypoint-cli-v4 api-mgr:api:edit --uri appUri $API_MANAGER_API_ID
+          anypoint-cli-v4 api-mgr:api:edit --uri $appUri $API_MANAGER_API_ID
