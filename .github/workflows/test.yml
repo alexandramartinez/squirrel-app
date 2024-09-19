@@ -45,4 +45,4 @@ jobs:
           --settings .maven/settings.xml \
           -DskipMunitTests \
           -Dclient.id="$CLIENT_ID" \
-          -Dclient.secret="$CLIENT_SECRET" | grep ":squirrel:" | grep -Eo "\d+[.]\d+[.]\d+"
+          -Dclient.secret="$CLIENT_SECRET" | grep ":squirrel:" | grep -Eo "[0-9]+[.][0-9]+[.][0-9]+"
