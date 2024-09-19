@@ -1,0 +1,49 @@
+name: Test workflow
+
+on:
+  push:
+    branches: [ test ]
+
+env:
+  CLIENT_ID: ${{ secrets.CONNECTED_APP_CLIENT_ID }}
+  CLIENT_SECRET: ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
+    
+jobs:         
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: 17 
+      - name: Set up NodeJS 16
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16
+      - name: Install Anypoint CLI & alias
+        run: |
+          npm install -g anypoint-cli-v4
+          alias anypoint=anypoint-cli-v4
+      - name: Authenticate to Anypoint CLI
+        run: |
+          anypoint conf client_id $CLIENT_ID
+          anypoint conf client_secret $CLIENT_SECRET
+      - name: Retrieve API RAML version and groupId
+        run: |
+          ramlVersion=$(mvn dependency:list -DincludeArtifactIds=squirrel \
+          --settings .maven/settings.xml \
+          -DskipMunitTests \
+          -Dclient.id="9c74f3c297534e05a2fc320e0460c4b5" \
+          -Dclient.secret="1194FDE3322645C89d9BE199D7327b81" | grep ":squirrel:" | grep -Eo "\d+[.]\d+[.]\d+")
+          groupId=$(mvn help:evaluate -Dexpression=project.groupId -q -DforceStdout)
+          echo $ramlVersion
+          echo $groupId
