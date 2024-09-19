@@ -7,6 +7,7 @@ on:
 env:
   CLIENT_ID: ${{ secrets.CONNECTED_APP_CLIENT_ID }}
   CLIENT_SECRET: ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
+  REST_API_ARTIFACT_ID: squirrel
     
 jobs:         
   test:
@@ -36,13 +37,13 @@ jobs:
         run: |
           anypoint-cli-v4 conf client_id $CLIENT_ID
           anypoint-cli-v4 conf client_secret $CLIENT_SECRET
-      - name: Retrieve groupId from pom.xml
+      - name: Set ORG_ID
         run: |
-          groupId=$(mvn help:evaluate -Dexpression=project.groupId -q -DforceStdout)
-      - name: Retrieve API RAML version
+          echo "ORG_ID=$(mvn help:evaluate -Dexpression=project.groupId -q -DforceStdout)" >> $GITHUB_ENV
+      - name: Set REST_API_VERSION
         run: |
-          mvn dependency:list -DincludeArtifactIds=squirrel \
+          echo "REST_API_VERSION=$(mvn dependency:list -DincludeArtifactIds=$REST_API_ARTIFACT_ID \
           --settings .maven/settings.xml \
           -DskipMunitTests \
           -Dclient.id="$CLIENT_ID" \
-          -Dclient.secret="$CLIENT_SECRET" | grep ":squirrel:" | grep -Eo "[0-9]+[.][0-9]+[.][0-9]+"
+          -Dclient.secret="$CLIENT_SECRET" | grep ":$REST_API_ARTIFACT_ID:" | grep -Eo "[0-9]+[.][0-9]+[.][0-9]+")" >> $GITHUB_ENV
