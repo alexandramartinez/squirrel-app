@@ -50,3 +50,9 @@ jobs:
       - name: API Manager - Change specification version
         run: |
           anypoint-cli-v4 api-mgr:api:change-specification $API_MANAGER_API_ID $REST_API_VERSION
+      - name: API Manager - Update implementation URI
+        run: |
+          appName=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
+          appId=$(anypoint-cli-v4 runtime-mgr:application:list --output json | jq '.[]|select(.name=="$appName").id')
+          appUri=$(anypoint-cli-v4 runtime-mgr:application:describe --output json $appId | jq '.target.deploymentSettings.http.inbound.publicUrl')
+          anypoint-cli-v4 api-mgr:api:edit --uri appUri $API_MANAGER_API_ID
