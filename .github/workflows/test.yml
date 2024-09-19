@@ -8,7 +8,7 @@ env:
   ANYPOINT_CLIENT_ID: ${{ secrets.CONNECTED_APP_CLIENT_ID }}
   ANYPOINT_CLIENT_SECRET: ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
   REST_API_ARTIFACT_ID: squirrel
-  API_MANAGER_API_ID: "19940258"
+  API_MANAGER_API_ID: 19940258
     
 jobs:         
   test:
@@ -49,4 +49,4 @@ jobs:
           -Dclient.secret="$ANYPOINT_CLIENT_SECRET" | grep ":$REST_API_ARTIFACT_ID:" | grep -Eo "[0-9]+[.][0-9]+[.][0-9]+")" >> $GITHUB_ENV
       - name: API Manager - Change specification version
         run: |
-          anypoint-cli-v4 api-mgr:api:change-specification $API_MANAGER_API_ID REST_API_VERSION
+          anypoint-cli-v4 api-mgr:api:change-specification $API_MANAGER_API_ID $REST_API_VERSION
