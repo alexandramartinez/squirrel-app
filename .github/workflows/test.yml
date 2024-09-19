@@ -36,13 +36,14 @@ jobs:
         run: |
           anypoint-cli-v4 conf client_id $CLIENT_ID
           anypoint-cli-v4 conf client_secret $CLIENT_SECRET
-      - name: Retrieve API RAML version and groupId
+      - name: Retrieve groupId from pom.xml
+        run: |
+          groupId=$(mvn help:evaluate -Dexpression=project.groupId -q -DforceStdout)
+          echo $groupId
+      - name: Retrieve API RAML version
         run: |
           ramlVersion=$(mvn dependency:list -DincludeArtifactIds=squirrel \
           --settings .maven/settings.xml \
           -DskipMunitTests \
           -Dclient.id="9c74f3c297534e05a2fc320e0460c4b5" \
           -Dclient.secret="1194FDE3322645C89d9BE199D7327b81" | grep ":squirrel:" | grep -Eo "\d+[.]\d+[.]\d+")
-          groupId=$(mvn help:evaluate -Dexpression=project.groupId -q -DforceStdout)
-          echo $ramlVersion
-          echo $groupId
