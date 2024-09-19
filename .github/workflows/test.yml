@@ -51,6 +51,9 @@ jobs:
       - name: API Manager - Update implementation URI
         run: |
           appName=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
+          echo $appName
           appId=$(anypoint-cli-v4 runtime-mgr:application:list --output json | jq '.[]|select(.name=="$appName").id')
+          echo $appId
           appUri=$(anypoint-cli-v4 runtime-mgr:application:describe --output json $appId | jq '.target.deploymentSettings.http.inbound.publicUrl')
+          echo $appUri
           anypoint-cli-v4 api-mgr:api:edit --uri $appUri $API_MANAGER_API_ID
