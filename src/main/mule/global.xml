@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
-	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-	http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-	http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd
-	http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
-  <http:listener-config name="squirrel-httpListenerConfig">
-    <http:listener-connection host="${http.listener.host}" port="${http.listener.port}" />
-  </http:listener-config>
-  <apikit:config name="squirrel-config" api="resource::8ee07573-4230-4e12-b0c1-6f824217216f:squirrel:1.0.1:raml:zip:squirrel.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-  <configuration-properties file="${env}-props.yaml" doc:name="Configuration properties" />
-  <global-property name="env" value="dev" />
-  <api-gateway:autodiscovery apiId="${api.id}" flowRef="squirrel-main" doc:name="Autodiscovery" />
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd  http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+    <http:listener-config name="squirrel-httpListenerConfig">
+        <http:listener-connection host="${http.listener.host}" port="${http.listener.port}" />
+    </http:listener-config>
+    <apikit:config name="squirrel-config" api="resource::8ee07573-4230-4e12-b0c1-6f824217216f:squirrel:1.1.0:raml:zip:squirrel.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <configuration-properties file="${env}-props.yaml" doc:name="Configuration properties" />
+    <global-property name="env" value="dev" />
+    <api-gateway:autodiscovery apiId="${api.id}" flowRef="squirrel-main" doc:name="Autodiscovery" />
 </mule>
