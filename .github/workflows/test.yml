@@ -32,13 +32,10 @@ jobs:
       - name: Install Anypoint CLI
         run: |
           npm install -g anypoint-cli-v4
-      - name: Add alias for Anypoint CLI
-        run: |
-          alias anypoint=anypoint-cli-v4
       - name: Authenticate to Anypoint CLI
         run: |
-          anypoint conf client_id $CLIENT_ID
-          anypoint conf client_secret $CLIENT_SECRET
+          anypoint-cli-v4 conf client_id $CLIENT_ID
+          anypoint-cli-v4 conf client_secret $CLIENT_SECRET
       - name: Retrieve API RAML version and groupId
         run: |
           ramlVersion=$(mvn dependency:list -DincludeArtifactIds=squirrel \
