@@ -1,8 +1,8 @@
-name: Test workflow
+name: Deploy and Update API Mgr
 
 on:
   push:
-    branches: [ test ]
+    branches: [ main ]
 
 env:
   ANYPOINT_CLIENT_ID: ${{ secrets.CONNECTED_APP_CLIENT_ID }}
@@ -10,7 +10,7 @@ env:
   REST_API_ARTIFACT_ID: squirrel
   API_MANAGER_API_ID: 19940258
     
-jobs:   
+jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
