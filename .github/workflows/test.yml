@@ -1,0 +1,83 @@
+name: Deploy and Update API Mgr
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  ANYPOINT_CLIENT_ID: ${{ secrets.CONNECTED_APP_CLIENT_ID }}
+  ANYPOINT_CLIENT_SECRET: ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
+  REST_API_ARTIFACT_ID: squirrel
+  API_MANAGER_API_ID: 19940258
+    
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: 17
+      - name: Publish to Exchange
+        run: |
+          mvn deploy --settings .maven/settings.xml -DskipMunitTests \
+          -Dclient.id="$ANYPOINT_CLIENT_ID" \
+          -Dclient.secret="$ANYPOINT_CLIENT_SECRET"
+      - name: Deploy to CloudHub 2.0
+        run: |
+          mvn deploy --settings .maven/settings.xml -DskipMunitTests -DmuleDeploy \
+          -Dclient.id="$ANYPOINT_CLIENT_ID" \
+          -Dclient.secret="$ANYPOINT_CLIENT_SECRET"
+  update-api-mgr:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: 17 
+      - name: Set up NodeJS 16
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16
+      - name: Install Anypoint CLI
+        run: |
+          npm install -g anypoint-cli-v4
+      - name: Set ANYPOINT_ORG
+        run: |
+          echo "ANYPOINT_ORG=$(mvn help:evaluate -Dexpression=project.groupId -q -DforceStdout)" >> $GITHUB_ENV
+      - name: Set ANYPOINT_ENV
+        run: |
+          echo "ANYPOINT_ENV=$(mvn help:evaluate -Dexpression=env -q -DforceStdout)" >> $GITHUB_ENV
+      - name: API Manager - Change specification version
+        run: |
+          restApiVersion=$(mvn dependency:list -DincludeArtifactIds=$REST_API_ARTIFACT_ID \
+          --settings .maven/settings.xml \
+          -DskipMunitTests \
+          -Dclient.id="$ANYPOINT_CLIENT_ID" \
+          -Dclient.secret="$ANYPOINT_CLIENT_SECRET" | grep ":$REST_API_ARTIFACT_ID:" | grep -Eo "[0-9]+[.][0-9]+[.][0-9]+")
+          anypoint-cli-v4 api-mgr:api:change-specification $API_MANAGER_API_ID $restApiVersion
+      - name: API Manager - Update implementation URI
+        run: |
+          appName=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
+          appId=$(anypoint-cli-v4 runtime-mgr:application:list --output json | jq '.[]|select(.name=="'"$appName"'").id' | grep -Eo '[^"].+[^"]')
+          appUri=$(anypoint-cli-v4 runtime-mgr:application:describe --output json $appId | jq '.target.deploymentSettings.http.inbound.publicUrl' | grep -Eo '[^"].+[^"]')
+          anypoint-cli-v4 api-mgr:api:edit --uri $appUri $API_MANAGER_API_ID
