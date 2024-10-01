@@ -10,8 +10,35 @@ env:
   REST_API_ARTIFACT_ID: squirrel
   API_MANAGER_API_ID: 19940258
     
-jobs:         
-  test:
+jobs:   
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: 17
+      - name: Publish to Exchange
+        run: |
+          mvn deploy --settings .maven/settings.xml -DskipMunitTests \
+          -Dclient.id="$ANYPOINT_CLIENT_ID" \
+          -Dclient.secret="$ANYPOINT_CLIENT_SECRET"
+      - name: Deploy to CloudHub 2.0
+        run: |
+          mvn deploy --settings .maven/settings.xml -DskipMunitTests -DmuleDeploy \
+          -Dclient.id="$ANYPOINT_CLIENT_ID" \
+          -Dclient.secret="$ANYPOINT_CLIENT_SECRET"
+  update-api-mgr:
+    needs: deploy
     runs-on: ubuntu-latest
     steps:
       - name: Checkout this repo
